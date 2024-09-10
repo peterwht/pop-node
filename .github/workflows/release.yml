@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-      - name: Determine Runtime
+      - name: Determine Runtime and Set Node Build Opts
         id: determine_runtime
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
@@ -51,6 +51,13 @@ jobs:
             echo "RUNTIME=mainnet" >> $GITHUB_ENV
           else
             echo "RUNTIME=devnet" >> $GITHUB_ENV  # Default to devnet if no tag matches
+          fi
+          
+          # if devnet, build the node with ismp feature
+          if [ "$RUNTIME" == "devnet" ]; then
+            echo "NODE_BUILD_OPTS=--features on-chain-release-build,ismp" >> $GITHUB_ENV
+          else
+            echo "NODE_BUILD_OPTS=--features on-chain-release-build" >> $GITHUB_ENV
           fi
 
       - name: Cache runtime target dir
@@ -66,8 +73,8 @@ jobs:
         id: srtool_build
         uses: chevdor/srtool-actions@v0.9.2
         env:
-          # if devnet, build with --features ismp
-          BUILD_OPTS: ${{ env.RUNTIME == 'devnet' && '--features on-chain-release-build,ismp' || '--features on-chain-release-build' }}
+          # runtimes do not have ismp feature
+          BUILD_OPTS: '--features on-chain-release-build'
         with:
           chain: ${{ env.RUNTIME }}
           package: "pop-runtime-${{ env.RUNTIME }}"
@@ -189,7 +196,7 @@ jobs:
         run: rustup target add ${{ matrix.platform.target }}
 
       - name: Build node
-        run: cargo build --profile=production -p pop-node --features on-chain-release-build --target ${{ matrix.platform.target }}
+        run: cargo build --profile=production -p pop-node $NODE_BUILD_OPTS --target ${{ matrix.platform.target }}
 
       - name: Package binary (Linux)
         if: contains(matrix.platform.target, 'linux')
