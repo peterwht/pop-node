@@ -35,13 +35,9 @@ jobs:
       github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
-    strategy:
-      matrix:
-        runtime: [ ${ { fromJSON(inputs.runtimes) } } ]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-
       - name: Determine Runtime
         id: determine_runtime
         run: |
