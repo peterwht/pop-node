@@ -43,11 +43,11 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "RUNTIME=${{ github.event.inputs.runtime }}" >> $GITHUB_ENV
-          elif startsWith(github.event.release.tag_name, 'devnet'); then
+          elif [[ "${{ github.event.release.tag_name }}" == devnet* ]]; then
             echo "RUNTIME=devnet" >> $GITHUB_ENV
-          elif startsWith(github.event.release.tag_name, 'testnet'); then
+          elif [[ "${{ github.event.release.tag_name }}" == testnet* ]]; then
             echo "RUNTIME=testnet" >> $GITHUB_ENV
-          elif startsWith(github.event.release.tag_name, 'mainnet'); then
+          elif [[ "${{ github.event.release.tag_name }}" == mainnet* ]]; then
             echo "RUNTIME=mainnet" >> $GITHUB_ENV
           else
             echo "RUNTIME=devnet" >> $GITHUB_ENV  # Default to devnet if no tag matches
