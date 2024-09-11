@@ -93,7 +93,7 @@ jobs:
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.runtime }}-runtime-${{ github.sha }}
+          name: ${{ env.RUNTIME }}-runtime-${{ github.sha }}
           path: |
             pop_runtime_${{ env.RUNTIME }}*.wasm
             ${{ env.RUNTIME }}-srtool-digest.json
