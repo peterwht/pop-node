@@ -18,7 +18,7 @@ on:
       runtime:
         description: 'Runtime to build (devnet, testnet, mainnet)'
         required: false
-        default: 'devnet'
+        default: ''
         type: choice
         options:
           - devnet
